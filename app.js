@@ -14,6 +14,12 @@ const port = 3000;
 HOST_SERVER="10.8.0.2";
 PORT="1338"
 
+let access_keys = {
+    secrey_key: "",
+    public_key: "",
+    token: ""
+}
+
 // Fonction lancée eu démarrage du service
 const start = async () => {
 
@@ -32,17 +38,43 @@ const start = async () => {
                     password: "tHuds4752_525@"
                 }
             });
-        console.log(response)
     }catch(e){
         console.error(e.response ? e.response.data : e)
         return
     }
     console.log(response.data);
+    this.access_keys = response.data;
 
 }
 
 app.get('/ping', async (req, res) => {
     res.json("pong")
+})
+
+app.get('/getKey', async (req, res) => {
+    if (req.headers['x-auth-token']) {
+        tokenValidationResponse = await axios.post(
+            `http://${HOST_SERVER}:${PORT}/token/validate`, 
+            {
+                token: req.headers['x-auth-token'],
+            },
+            {
+                headers: {
+                    "x-auth-token": this.access_keys.token,
+                }
+            }
+        ).catch(e => {
+            res.json(e)
+        });
+
+        if (tokenValidationResponse) {
+            res.json(tokenValidationResponse.data)
+        } else {
+            res.json("Invalid Token")
+        }
+    } else {
+        res.json("You need to Log In")
+    }
 })
 
 app.get('/register', async (req, res) => {
