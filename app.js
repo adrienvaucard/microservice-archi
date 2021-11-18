@@ -70,6 +70,13 @@ const start = async () => {
             console.log("----")
             console.log(microservice.code + "'s microservice not implemented")
             console.log("GetKey Error on : " + microservice.host)
+            if (e.response && e.response.status === 403) {
+                res.status(403)
+                res.send("Authentification invalide")
+            } else {
+                res.status(502)
+                res.send("L’annuaire est indisponible, impossible de vérifier le jeton")
+            }
         });
 
         if (microResponse) {
@@ -86,6 +93,13 @@ const start = async () => {
                 }
             ).catch(e => {
                 console.log("Unlock Error")
+                if (e.response && e.response.status === 403) {
+                    res.status(403)
+                    res.send("Authentification invalide")
+                } else {
+                    res.status(502)
+                    res.send("L’annuaire est indisponible, impossible de vérifier le jeton")
+                }
             });
 
             if (unlockResponse) {
@@ -114,8 +128,13 @@ app.get('/getKey', async (req, res) => {
             }
         ).catch(e => {
             console.log("Error while validating token")
-            res.status(502)
-            res.send("L’annuaire est indisponible, impossible de vérifier le jeton")
+            if (e.response && e.response.status === 403) {
+                res.status(403)
+                res.send("Authentification invalide")
+            } else {
+                res.status(502)
+                res.send("L’annuaire est indisponible, impossible de vérifier le jeton")
+            }
         });
 
         if (tokenValidationResponse) {
@@ -157,6 +176,14 @@ app.post('/newservice', async (req, res) => {
             console.log("----")
             console.log(req.body.code + "'s microservice not implemented")
             console.log("GetKey Error on : " + req.body.host)
+            if (e.response && e.response.status === 403) {
+                res.status(403)
+                res.send("Authentification invalide")
+            } else {
+                res.status(502)
+                res.send("L’annuaire est indisponible, impossible de vérifier le jeton")
+            }
+            
         });
 
         if (microResponse) {
@@ -173,6 +200,13 @@ app.post('/newservice', async (req, res) => {
                 }
             ).catch(e => {
                 console.log("Unlock Error")
+                if (e.response && e.response.status === 403) {
+                    res.status(403)
+                    res.send("Authentification invalide")
+                } else {
+                    res.status(502)
+                    res.send("L’annuaire est indisponible, impossible de vérifier le jeton")
+                }
             });
 
             if (unlockResponse) {
