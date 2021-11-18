@@ -68,7 +68,15 @@ app.get('/getKey', async (req, res) => {
         });
 
         if (tokenValidationResponse) {
-            res.json(tokenValidationResponse.data)
+            if (tokenValidationResponse.data.valid) {
+                let encrypted_public_key = encrypt(this.access_keys.secret_key, this.access_keys.public_key)
+                res.json({
+                    encrypted_public_key: encrypted_public_key
+                });
+            } else {
+                res.json("Invalid Token")
+            }
+            
         } else {
             res.json("Invalid Token")
         }
