@@ -144,19 +144,44 @@ app.get('/getKey', async (req, res) => {
     }
 })
 
-app.get('/register', async (req, res) => {
-    // Récuperer les headers
-    let headers = req.headers;
-    res.json()
-})
+app.post('/newservice', async (req, res) => {
+    if(req.body.code && req.body.host) {
+        microResponse = await axios.get(
+            `${req.body.host}/getKey`, 
+            {
+                headers: {
+                    "x-auth-token": this.access_keys.token,
+                }
+            }
+        ).catch(e => {
+            console.log("----")
+            console.log(req.body.code + "'s microservice not implemented")
+            console.log("GetKey Error on : " + req.body.host)
+        });
 
-// Création d'un endpoint en POST
-app.post('/url_du_endpoint_en_post', async (req, res) => {
-    // Récuération du body
-    let body = req.body;
-    let headers = req.headers;
-    console.log(body)
-    console.log(headers)
+        if (microResponse) {
+            unlockResponse = await axios.post(
+                `http://${HOST_SERVER}:${PORT}/key/unlock`, 
+                {
+                    code: req.body.code,
+                    key: microResponse.data.encrypted_public_key
+                },
+                {
+                    headers: {
+                        "x-auth-token": this.access_keys.token,
+                    }
+                }
+            ).catch(e => {
+                console.log("Unlock Error")
+            });
+
+            if (unlockResponse) {
+                console.log("----")
+                console.log(unlockResponse.data)
+            }
+        }
+    }
+
     res.json()
 })
 
