@@ -8,14 +8,31 @@ const app = express()
 app.use(bodyparser.json())
 const port = 3000;
 
+// Adresse IP = 10.8.0.21
+// Adresse Annuaire = 10.8.0.2
+
+HOST_SERVER="10.8.0.2";
+PORT="1338"
 
 // Fonction lancée eu démarrage du service
 const start = async () => {
 
-    // Envoie d'une requete
+    // Register MicroService
     let response;
     try {
-        response = await axios.post("http://<host>:<port>", {"data_key" : 'hello'}, {headers : { 'my-custom-header' : 'xxx'}});
+        response = await axios.post(
+            `http://${HOST_SERVER}:${PORT}/register`, 
+            {
+                host: 'http://10.8.0.21:3000',
+                code:"adrien.vaucard"
+            },
+            {
+                auth: {
+                    username: "ynovset",
+                    password: "tHuds4752_525@"
+                }
+            });
+        console.log(response)
     }catch(e){
         console.error(e.response ? e.response.data : e)
         return
@@ -24,8 +41,11 @@ const start = async () => {
 
 }
 
-// Création d'un endpoint en GET
-app.get('/url_du_endpoint_en_get', async (req, res) => {
+app.get('/ping', async (req, res) => {
+    res.json("pong")
+})
+
+app.get('/register', async (req, res) => {
     // Récuperer les headers
     let headers = req.headers;
     res.json()
