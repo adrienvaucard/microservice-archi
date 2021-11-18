@@ -64,23 +64,28 @@ app.get('/getKey', async (req, res) => {
                 }
             }
         ).catch(e => {
+            res.status(502)
             res.json(e)
         });
 
         if (tokenValidationResponse) {
             if (tokenValidationResponse.data.valid) {
                 let encrypted_public_key = encrypt(this.access_keys.secret_key, this.access_keys.public_key)
+                res.status(200)
                 res.json({
                     encrypted_public_key: encrypted_public_key
                 });
             } else {
+                res.status(500)
                 res.json("Invalid Token")
             }
             
         } else {
+            res.status(500)
             res.json("Invalid Token")
         }
     } else {
+        res.status(403)
         res.json("You need to Log In")
     }
 })
